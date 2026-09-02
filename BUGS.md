@@ -45,3 +45,15 @@ How to reproduce: Add multiple expenses with different dates. The list header sa
 What is wrong: The expenses list actually shows oldest first.
 
 What I changed: Adjusted the sorting logic in the expenses component to sort by date descending so the newest expense appears at the top.
+
+----
+
+## Bug 7
+Bug 7
+How to reproduce: Add an expense like $100 split equally among 3 members.
+
+What is wrong: Each member gets $33.33, but the total = $99.99, leaving a rounding gap.
+
+What I changed: Modified splitEqual so the last member’s share absorbs rounding differences, ensuring totals always equal the original expense.
+
+----
