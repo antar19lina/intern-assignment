@@ -14,23 +14,35 @@ function hydrate(data) {
 export function loadState(seed) {
   try {
     const raw = localStorage.getItem(KEY);
+
+    // If nothing stored, hydrate from seed
     if (!raw) {
       const initial = hydrate(seed);
       localStorage.setItem(KEY, JSON.stringify(initial));
       return initial;
     }
+
     const parsed = JSON.parse(raw);
-    // ✅ Fix: validate structure before returning
+
     if (!parsed.members || !parsed.expenses) {
       const initial = hydrate(seed);
       localStorage.setItem(KEY, JSON.stringify(initial));
       return initial;
     }
+
+    // Convert expense dates back to Date objects
+    parsed.expenses = parsed.expenses.map(e => ({
+      ...e,
+      date: new Date(e.date),
+    }));
+
     return parsed;
   } catch {
+    // If parsing fails, fallback to seed
     return hydrate(seed);
   }
 }
+
 
 export function persistState(state) {
   localStorage.setItem(KEY, JSON.stringify(state));
