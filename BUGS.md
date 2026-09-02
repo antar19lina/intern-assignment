@@ -49,7 +49,7 @@ What I changed: Adjusted the sorting logic in the expenses component to sort by 
 ----
 
 ## Bug 7
-Bug 7
+
 How to reproduce: Add an expense like $100 split equally among 3 members.
 
 What is wrong: Each member gets $33.33, but the total = $99.99, leaving a rounding gap.
@@ -57,3 +57,20 @@ What is wrong: Each member gets $33.33, but the total = $99.99, leaving a roundi
 What I changed: Modified splitEqual so the last member’s share absorbs rounding differences, ensuring totals always equal the original expense.
 
 ----
+## Bug 8
+
+How to reproduce: Add a member, then try to remove them from the group.
+
+What is wrong: There is no option or reducer logic to delete members. Once added, they remain permanently, even if they were added by mistake.
+
+What I changed: Added a new reducer case DELETE_MEMBER that removes a member by ID, and updated the UI to show a “Delete” button next to each member. Also added validation so you cannot delete a member who is still linked to existing expenses (to avoid breaking balances).
+
+-----
+
+# Bug 9
+
+How to reproduce: Add a member, then try to remove them from the group.
+
+What is wrong: There is no option or reducer logic to delete members. Once added, they remain permanently, even if they were added by mistake.
+
+What I changed: Added a new reducer case DELETE_MEMBER that removes a member by ID, and updated the UI to show a “Delete” button next to each member. Also added validation so you cannot delete a member who is still linked to existing expenses (to avoid breaking balances).
