@@ -36,3 +36,12 @@ How to reproduce: Add members with string IDs or mixed types.
 What is wrong: nextMemberId could break if IDs weren’t numeric.
 
 What I changed:Ensured IDs are converted to numbers before calculating the next ID.
+
+-------
+
+## Bug 6 
+How to reproduce: Add multiple expenses with different dates. The list header says “Newest first.”
+
+What is wrong: The expenses list actually shows oldest first.
+
+What I changed: Adjusted the sorting logic in the expenses component to sort by date descending so the newest expense appears at the top.
