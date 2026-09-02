@@ -19,7 +19,14 @@ export function loadState(seed) {
       localStorage.setItem(KEY, JSON.stringify(initial));
       return initial;
     }
-    return JSON.parse(raw);
+    const parsed = JSON.parse(raw);
+    // ✅ Fix: validate structure before returning
+    if (!parsed.members || !parsed.expenses) {
+      const initial = hydrate(seed);
+      localStorage.setItem(KEY, JSON.stringify(initial));
+      return initial;
+    }
+    return parsed;
   } catch {
     return hydrate(seed);
   }
@@ -34,7 +41,10 @@ export function nextExpenseId() {
 }
 
 export function nextMemberId(members) {
-  const max = members.reduce((m, x) => (x.id > m ? x.id : m), 0);
+  const max = members.reduce((m, x) => {
+    const idNum = Number(x.id);
+    return idNum > m ? idNum : m;
+  }, 0);
   return max + 1;
 }
 
@@ -54,11 +64,20 @@ export function reducer(state, action) {
       return { ...state, expenses: next };
     }
     case "ADD_MEMBER": {
-      // ✅ Fix: prevent duplicates
       if (state.members.some(m => m.name === action.member.name)) {
         return state;
       }
       return { ...state, members: [...state.members, action.member] };
+    }
+    case "DELETE_MEMBER": {
+      const hasExpenses = state.expenses.some(
+        e => e.paidBy === action.id || e.splitWith.includes(action.id)
+      );
+      if (hasExpenses) {
+        alert("Cannot delete member linked to existing expenses.");
+        return state;
+      }
+      return { ...state, members: state.members.filter(m => m.id !== action.id) };
     }
     default:
       return state;
