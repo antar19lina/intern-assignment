@@ -69,8 +69,10 @@ What I changed: Added a new reducer case DELETE_MEMBER that removes a member by 
 
 # Bug 9
 
-How to reproduce: Add a member, then try to remove them from the group.
+Average includes non‑participants
 
-What is wrong: There is no option or reducer logic to delete members. Once added, they remain permanently, even if they were added by mistake.
+How to reproduce: Add an expense assigned to only one person.
 
-What I changed: Added a new reducer case DELETE_MEMBER that removes a member by ID, and updated the UI to show a “Delete” button next to each member. Also added validation so you cannot delete a member who is still linked to existing expenses (to avoid breaking balances).
+What is wrong: The average per person still divides by all members, even those not part of the split.
+
+Fix: Updated average calculation to divide by the number of unique members actually included in splits, not the entire member list.
