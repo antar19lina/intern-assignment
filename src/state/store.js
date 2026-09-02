@@ -54,6 +54,10 @@ export function reducer(state, action) {
       return { ...state, expenses: next };
     }
     case "ADD_MEMBER": {
+      // ✅ Fix: prevent duplicates
+      if (state.members.some(m => m.name === action.member.name)) {
+        return state;
+      }
       return { ...state, members: [...state.members, action.member] };
     }
     default:

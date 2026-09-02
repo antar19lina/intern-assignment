@@ -1,50 +1,34 @@
-# Bugs found
+Bug 1
+How to reproduce: Open the app, add expenses, then check the Balances panel. Add all positive balances and compare with all negative balances.
 
-Add one section per issue. Bug 1 is filled in to show the format — fix it, then write what you changed. Copy the blank template for the rest.
+What is wrong: The total owed did not equal the total receivable. Balances did not sum to zero.
 
-Keep this file in the repo and **commit it** with your fixes.
+What I changed: Corrected the balance calculation in computeBalances (balances.js) so the payer isn’t double‑counted. Now debts and credits cancel out exactly.
 
----
-## BUG 1
-How to reproduce:
-1. Open the default Goa Weekend dataset.
-2. View the Balances panel.
-3. Add all positive balances and compare with all negative balances.
+Bug 2
+How to reproduce: In the “Add member” field, enter an existing member name (e.g., Aisha Khan). Click Add multiple times.
 
-What is wrong:
-The total amount owed does not equal the total amount receivable.
-Balances do not sum to zero.
+What is wrong: The app allowed duplicate members with the same name. Duplicates appeared in Balances and Split Between sections.
 
-Expected:
-In a closed group, total debts and credits must cancel out exactly.
+What I changed: Added validation in the reducer (store.js) to prevent adding a member if the name already exists.
 
-What I changed:
-Investigated and corrected the balance calculation logic to ensure all member balances sum to zero.
------
-## Bug 2
+Bug 3
+How to reproduce: Add duplicate members, then check the Summary section.
 
-How to reproduce:
-1. In the "Add member" field, enter an existing member name (Aisha Khan).
-2. Click Add multiple times.
+What is wrong: Average per person was calculated using duplicated members, producing misleading results.
 
-What is wrong:
-The application allows duplicate members with the same name.
-The member count increases and duplicate entries appear in Balances and Split Between sections.
+What I changed: Updated SummaryCards.jsx to calculate averages using only unique member names.
 
-Expected:
-The application should prevent duplicate members from being added.
+Bug 4
+How to reproduce: Create an expense with percentage splits that don’t sum exactly to 100 due to rounding.
 
-What I changed:
-Added validation to check if a member already exists before adding a new member.
------
-## Bug 3
+What is wrong: Validation failed because of strict equality check (percentsSumTo100).
 
-How to reproduce:
-1. Add duplicate members.
-2. Observe the Summary section.
+What I changed: Allowed a tolerance of ±0.01 in percentsSumTo100 (balances.js) to handle floating‑point rounding errors.
 
-What is wrong:
-Average per person is calculated using duplicated members, producing misleading results.
+Bug 5
+How to reproduce: Add members with string IDs or mixed types.
 
-Expected:
-Average per person should be based on unique group members only.
+What is wrong: nextMemberId could break if IDs weren’t numeric.
+
+What I changed:Ensured IDs are converted to numbers before calculating the next ID.

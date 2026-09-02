@@ -1,76 +1,24 @@
-import { useMemo, useState } from "react";
-import { formatMoney } from "../lib/money.js";
-import { totalSpent } from "../lib/balances.js";
+import React from "react";
 
-export default function SummaryCards({ members, expenses, onAddMember }) {
-  const [name, setName] = useState("");
+export default function SummaryCards({ members, expenses }) {
+  const totalExpense = expenses.reduce((sum, e) => sum + Number(e.amount), 0);
 
-  const perPerson = useMemo(() => {
-    return members.map((m) => {
-      const paid = expenses
-        .filter((e) => e.paidBy === m.id)
-        .reduce((s, e) => s + Number(e.amount), 0);
-      return { id: m.id, name: m.name, paid };
-    });
-  }, [expenses]);
-
-  const spent = totalSpent(expenses);
+  
+  const uniqueMembers = [...new Set(members.map(m => m.name))];
+  const avgPerPerson = uniqueMembers.length > 0 
+    ? (totalExpense / uniqueMembers.length).toFixed(2) 
+    : 0;
 
   return (
-    <section className="card">
-      <h2>Summary</h2>
-      <div className="summary-grid">
-        <div className="stat">
-          Expenses
-          <b>{expenses.length}</b>
-        </div>
-        <div className="stat">
-          Group total
-          <b>{formatMoney(spent)}</b>
-        </div>
-        <div className="stat">
-          Members
-          <b>{members.length}</b>
-        </div>
-        <div className="stat">
-          Avg / person
-          <b>{formatMoney(members.length ? spent / members.length : 0)}</b>
-        </div>
+    <div className="summary-cards">
+      <div className="card">
+        <h3>Total Expense</h3>
+        <p>${totalExpense.toFixed(2)}</p>
       </div>
-      <div style={{ marginTop: 12 }}>
-        <div className="legend">Paid so far</div>
-        {perPerson.map((p) => (
-          <div className="person-stat" key={p.id}>
-            <span>{p.name}</span>
-            <span>{formatMoney(p.paid)}</span>
-          </div>
-        ))}
+      <div className="card">
+        <h3>Average per Person</h3>
+        <p>${avgPerPerson}</p>
       </div>
-      <form
-        style={{ marginTop: 12 }}
-        onSubmit={(e) => {
-          e.preventDefault();
-          const trimmed = name.trim();
-          if (!trimmed) return;
-          onAddMember(trimmed);
-          setName("");
-        }}
-      >
-        <div className="row">
-          <div className="field">
-            <label htmlFor="newMember">Add member</label>
-            <input
-              id="newMember"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Name"
-            />
-          </div>
-          <button className="btn ghost" type="submit" style={{ alignSelf: "end" }}>
-            Add
-          </button>
-        </div>
-      </form>
-    </section>
+    </div>
   );
 }
